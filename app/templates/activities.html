@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Activities</h2>
+    <a href="{{ url_for('activities.create_activity') }}" class="btn btn-primary">New Activity</a>
+</div>
+
+{% if form %}
+  <h3 class="mb-3">{{ 'Edit Activity' if edit else 'New Activity' }}</h3>
+  <form method="post">
+      {{ form.hidden_tag() }}
+      <div class="mb-3">
+          {{ form.name.label(class="form-label") }}
+          {{ form.name(class="form-control") }}
+      </div>
+      <div class="mb-3">
+          {{ form.category_id.label(class="form-label") }}
+          {{ form.category_id(class="form-select") }}
+      </div>
+      <div class="form-check mb-3">
+          {{ form.is_active(class="form-check-input") }}
+          {{ form.is_active.label(class="form-check-label") }}
+      </div>
+      <button type="submit" class="btn btn-success">{{ form.submit.label.text }}</button>
+      <a href="{{ url_for('activities.list_activities') }}" class="btn btn-secondary">Cancel</a>
+  </form>
+  <hr>
+{% endif %}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Active</th>
+            <th style="width: 150px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for activity in activities %}
+        <tr>
+            <td>{{ activity.name }}</td>
+            <td>{{ activity.category.name }}</td>
+            <td>{{ 'Yes' if activity.is_active else 'No' }}</td>
+            <td>
+                <a href="{{ url_for('activities.edit_activity', activity_id=activity.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                <form method="post" action="{{ url_for('activities.delete_activity', activity_id=activity.id) }}" style="display:inline-block;" onsubmit="return confirm('Delete this activity?');">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

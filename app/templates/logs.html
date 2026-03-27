@@ -1,0 +1,156 @@
+<h3 class="mb-3">New Log</h3>
+
+<form method="post" id="log-form">
+  {{ form.hidden_tag() }}
+
+  <!-- Date -->
+  <div class="mb-3">
+    {{ form.date.label(class="form-label") }}
+    {{ form.date(class="form-control") }}
+  </div>
+
+  <!-- Time -->
+  <div class="mb-3">
+    {{ form.time.label(class="form-label") }}
+    {{ form.time(class="form-control") }}
+  </div>
+
+  <!-- Intensity at the top -->
+  <div class="mb-3">
+    {{ form.intensity.label(class="form-label") }}
+    {{ form.intensity(class="form-control") }}
+  </div>
+
+  <!-- Hidden container where JS will inject one hidden input per selected activity -->
+<div id="activity-hidden-container"></div>
+
+<!-- Category + Activity tiles -->
+{% for category in categories %}
+  <h5 class="mt-3">{{ category.name }}</h5>
+  <div class="activity-grid">
+      {% for activity in category.activities %}
+          <button type="button"
+                  class="activity-tile"
+                  data-id="{{ activity.id }}">
+              {{ activity.name }}
+          </button>
+      {% endfor %}
+  </div>
+{% endfor %}
+
+<!-- JS: tile toggle + create hidden inputs on submit -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const tiles = document.querySelectorAll(".activity-tile");
+  const hiddenContainer = document.getElementById("activity-hidden-container");
+  const form = document.getElementById("log-form");
+  const selected = new Set();
+
+  tiles.forEach(tile => {
+    tile.addEventListener("click", () => {
+      const id = String(tile.dataset.id);
+      if (selected.has(id)) {
+        selected.delete(id);
+        tile.classList.remove("selected");
+      } else {
+        selected.add(id);
+        tile.classList.add("selected");
+      }
+    });
+  });
+
+  form.addEventListener("submit", function () {
+    hiddenContainer.innerHTML = "";
+    selected.forEach(id => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "activity_ids";   // IMPORTANT: matches WTForms field name
+      input.value = id;
+      hiddenContainer.appendChild(input);
+    });
+  });
+});
+</script>
+
+
+  <!-- Notes -->
+  <div class="mb-3 mt-3">
+    {{ form.notes.label(class="form-label") }}
+    {{ form.notes(class="form-control", rows="3") }}
+  </div>
+
+  <!-- Save -->
+  <button type="submit" class="btn btn-success btn-lg w-100 mt-3">
+    Save Log
+  </button>
+</form>
+
+<!-- JS: tile toggle + create hidden inputs on submit -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const tiles = document.querySelectorAll(".activity-tile");
+  const hiddenContainer = document.getElementById("activity-hidden-container");
+  const form = document.getElementById("log-form");
+
+  // Keep selected IDs in a Set (strings)
+  const selected = new Set();
+
+  // Toggle behavior for tiles
+  tiles.forEach(tile => {
+    tile.addEventListener("click", () => {
+      const id = String(tile.dataset.id);
+      if (selected.has(id)) {
+        selected.delete(id);
+        tile.classList.remove("selected");
+      } else {
+        selected.add(id);
+        tile.classList.add("selected");
+      }
+    });
+  });
+
+  // Before submit, clear hidden container and add one hidden input per selected id
+  form.addEventListener("submit", function (e) {
+    // Remove any previous hidden inputs
+    hiddenContainer.innerHTML = "";
+
+    // If nothing selected, leave container empty (form validation may fail if required)
+    selected.forEach(id => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "activity_ids";   // IMPORTANT: matches WTForms field name
+      input.value = id;
+      hiddenContainer.appendChild(input);
+    });
+
+    // Let the form submit normally after hidden inputs are added
+  });
+});
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const tiles = document.querySelectorAll(".activity-tile");
+    const hiddenField = document.getElementById("activity_ids");
+
+    let selected = new Set();
+
+    tiles.forEach(tile => {
+        tile.addEventListener("click", () => {
+            const id = tile.dataset.id;
+
+            if (selected.has(id)) {
+                selected.delete(id);
+                tile.classList.remove("selected");
+            } else {
+                selected.add(id);
+                tile.classList.add("selected");
+            }
+
+            hiddenField.value = Array.from(selected);
+        });
+    });
+});
+</script>
+

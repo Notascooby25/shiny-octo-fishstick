@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-3">Welcome</h1>
+<p>This is your personal sleep and wellness tracker.</p>
+<ul>
+    <li><a href="{{ url_for('logs.create_log') }}">Log today</a></li>
+    <li><a href="{{ url_for('categories.list_categories') }}">Manage categories</a></li>
+    <li><a href="{{ url_for('activities.list_activities') }}">Manage activities</a></li>
+</ul>
+{% endblock %}

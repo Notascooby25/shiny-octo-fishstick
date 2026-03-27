@@ -1,0 +1,23 @@
+body {
+    padding-bottom: 40px;
+}
+.activity-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.activity-tile {
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    background: #f8f9fa;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.activity-tile.selected {
+    background: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
